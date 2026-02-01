@@ -1,5 +1,5 @@
 # DYNDNS NETCUP GO
-![Build](https://github.com/Hentra/dyndns-netcup-go/workflows/Build/badge.svg?branch=master)
+[![Build](https://github.com/Hentra/dyndns-netcup-go/actions/workflows/build.yml/badge.svg)](https://github.com/Hentra/dyndns-netcup-go/actions/workflows/build.yml)
 [![Issues](https://img.shields.io/github/issues/Hentra/dyndns-netcup-go)](https://github.com/Hentra/dyndns-netcup-go/issues)
 [![Release](https://img.shields.io/github/release/Hentra/dyndns-netcup-go?include_prereleases)](https://github.com/Hentra/dyndns-netcup-go/releases)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Hentra/dyndns-netcup-go)](https://goreportcard.com/report/github.com/Hentra/dyndns-netcup-go)
@@ -37,8 +37,8 @@ dynamic DNS needs.
 * Creation of a DNS record if it doesn't already exist
 * Multi host support (nice when you need to update both `@` and `*`) 
 * IPv6 support
-* secure Docker support 
-* secret files
+* Secure Docker support 
+* Secret files
 
 If you need additional features please open up an
 [Issue](https://github.com/Hentra/dyndns-netcup-go/issues).
@@ -47,52 +47,21 @@ If you need additional features please open up an
 
 ### Docker compose example using secret files
 
-You need to create config.yml file in the same directory as the docker-compose.yml file, take a look at [config/example.yml](config/example.yml) for an example.
-For a Docker setup do not save your secrets (api key, etc.) directly in the config.yml, but rather as environment variable or secret file, as shown below!
-For secrets management create three files under `secrets/` with the names `customernr`, `apikey` and `apipassword`, like in the [secrets/](secrets/) directory.
-To further protect the secrets from unauthorized access, make sure it is owned by the user that runs dyndns-netcup-go, by default being the UID 62534 and make it read-only:
+You need to create config.yml file in the same directory as the
+docker-compose.yml file, take a look at [config/example.yml](config/example.yml)
+for an example.  For a Docker setup do not save your secrets (api key, etc.)
+directly in the config.yml, but rather as environment variable or secret file,
+as shown below.  For secrets management create three files under `secrets/` with
+the names `customernr`, `apikey` and `apipassword`.  To further protect the
+secrets from unauthorized access, make sure it is owned by the user that runs
+dyndns-netcup-go, by default being the UID 62534 and make it read-only:
+
 ```shell
 sudo chown 62534:62534 secrets/*
 sudo chmod 440 secrets/*
 ```
 
-After that setup you can use the following docker-compose.yml as an example, also available in [docker-compose.yml](docker-compose.yml):
-```compose.yml
-services:
-  dyn-dns:
-    image: ghcr.io/hentra/dyndns-netcup-go
-    container_name: Netcup-Dyn-DNS
-    environment:
-      - INTERVAL=300
-      - CUSTOMERNR_FILE=/run/secrets/customernr
-      - APIKEY_FILE=/run/secrets/apikey
-      - APIPASSWORD_FILE=/run/secrets/apipassword
-    secrets:
-      - customernr
-      - apikey
-      - apipassword
-    volumes:
-      - ./config.yml:/config.yml
-    security_opt:
-      - no-new-privileges
-    cap_drop:
-      - ALL
-    restart: unless-stopped
-    networks:
-      - ipv6-enabled-network
-
-secrets:
-  customernr:
-    file: ./secrets/customernr
-  apikey:
-    file: ./secrets/apikey
-  apipassword:
-    file: ./secrets/apipassword
-
-networks:
-  ipv6-enabled-network:
-    enable_ipv6: true
-```
+After that setup you can use the [docker-compose.yml](docker-compose.yml) as example.
 
 ### Docker CLI
 
@@ -104,7 +73,8 @@ networks:
         -e APIPASSWORD=my-fancy-api-pw \
         ghcr.io/hentra/dyndns-netcup-go
 
-This allows you to store the configuration in plain text(e.g. git) and inject the secrets safely from a secret management solution.
+This allows you to store the configuration in plain text(e.g. git) and inject
+the secrets safely from a secret management solution.
 
 ### Environment Variables
 
@@ -176,4 +146,3 @@ To enable the cache configure the two variables `IP-CACHE` and
 For any feature requests and or bugs open up an
 [Issue](https://github.com/Hentra/dyndns-netcup-go/issues).  Feel free to also
 add a pull request and I will have a look on it.
-
