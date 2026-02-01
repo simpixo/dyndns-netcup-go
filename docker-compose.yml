@@ -1,7 +1,7 @@
 services:
-  dyn-dns:
+  dyndns:
     image: ghcr.io/hentra/dyndns-netcup-go
-    container_name: Netcup-Dyn-DNS
+    container_name: netcup-dyn-dns
     environment:
       - INTERVAL=300
       - CUSTOMERNR_FILE=/run/secrets/customernr

@@ -57,6 +57,7 @@ secrets from unauthorized access, make sure it is owned by the user that runs
 dyndns-netcup-go, by default being the UID 62534 and make it read-only:
 
 ```shell
+mkdir -p secrets/
 sudo chown 62534:62534 secrets/*
 sudo chmod 440 secrets/*
 ```

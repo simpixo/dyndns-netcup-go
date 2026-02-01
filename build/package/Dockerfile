@@ -7,8 +7,10 @@ RUN CGO_ENABLED=0 go build -ldflags '-extldflags "-static"' -tags timetzdata -o 
 
 # production stage
 LABEL org.opencontainers.image.source=https://github.com/Hentra/dyndns-netcup-go
-FROM alpine:latest
-RUN mkdir /cache/
+FROM scratch
+USER 62534:62534
+COPY --from=build-stage --chown=62534:62534 /ipcache /ipcache
+COPY --from=build-stage /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=build-stage /dyndns-docker /dyndns-docker
 
 ENTRYPOINT ["/dyndns-docker"]
