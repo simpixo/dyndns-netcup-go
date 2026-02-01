@@ -1,7 +1,6 @@
 package internal
 
 import (
-	"io/ioutil"
 	"os"
 	"strconv"
 	"strings"
@@ -33,7 +32,7 @@ type Domain struct {
 // unable to read it. CUSTOMERNR, APIKEY and APIPASSWORD can also be read
 // from environment variables or secret files, if present.
 func LoadConfig(filename string) (*Config, error) {
-	yamlFile, err := ioutil.ReadFile(filename)
+	yamlFile, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +44,7 @@ func LoadConfig(filename string) (*Config, error) {
 	}
 
 	// Fetch secrets from environment variables / secret files
-	customerNumberOverride, err := get_secret("CUSTOMERNR")
+	customerNumberOverride, err := getSecret("CUSTOMERNR")
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +56,7 @@ func LoadConfig(filename string) (*Config, error) {
 		config.CustomerNumber = nr
 	}
 
-	apiKeyOverride, err := get_secret("APIKEY")
+	apiKeyOverride, err := getSecret("APIKEY")
 	if err != nil {
 		return nil, err
 	}
@@ -65,7 +64,7 @@ func LoadConfig(filename string) (*Config, error) {
 		config.APIKey = apiKeyOverride
 	}
 
-	apiPasswordOverride, err := get_secret("APIPASSWORD")
+	apiPasswordOverride, err := getSecret("APIPASSWORD")
 	if err != nil {
 		return nil, err
 	}
@@ -76,21 +75,18 @@ func LoadConfig(filename string) (*Config, error) {
 	return &config, nil
 }
 
-// get_secret returns the secret for a given key, either by reading its
+// getSecret returns the secret for a given key, either by reading its
 // environment variable or by reading it from a secret file
-func get_secret(key string) (secret string, error error) {
-	// try to read file from environment variable key with _FILE ending
+func getSecret(key string) (secret string, error error) {
 	secret_file_location := os.Getenv(key + "_FILE")
-	// if environment variable was set and we got a file location, read it
 	if secret_file_location != "" {
 		secret_file, err := os.ReadFile(secret_file_location)
 		if err != nil {
 			return "", err
 		}
-		secret = strings.TrimSpace(string(secret_file))
-		return secret, nil
+		return strings.TrimSpace(string(secret_file)), nil
 	}
-	// fallback to simply reading the environment variable itself
+
 	return os.Getenv(key), nil
 }
 
